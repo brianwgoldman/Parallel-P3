@@ -18,6 +18,7 @@ CPP_SRCS += \
 ../src/Pyramid.cpp \
 ../src/RandomRestartHC.cpp \
 ../src/Record.cpp \
+../src/SolutionMessenger.cpp \
 ../src/Util.cpp \
 ../src/main.cpp 
 
@@ -36,6 +37,7 @@ OBJS += \
 ./src/Pyramid.o \
 ./src/RandomRestartHC.o \
 ./src/Record.o \
+./src/SolutionMessenger.o \
 ./src/Util.o \
 ./src/main.o 
 
@@ -54,6 +56,7 @@ CPP_DEPS += \
 ./src/Pyramid.d \
 ./src/RandomRestartHC.d \
 ./src/Record.d \
+./src/SolutionMessenger.d \
 ./src/Util.d \
 ./src/main.d 
 
@@ -61,8 +64,8 @@ CPP_DEPS += \
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
-	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++11 -O0 -g3 -pg -pedantic -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	@echo 'Invoking: Cross G++ Compiler'
+	mpic++ -std=c++11 -O0 -g3 -pg -pedantic -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

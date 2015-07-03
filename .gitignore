@@ -14,7 +14,7 @@
 
 # Build files
 *.d
-P3
+MP3
 gmon.out
 output.dat
 cfg.cfg

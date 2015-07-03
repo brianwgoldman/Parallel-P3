@@ -15,6 +15,7 @@
 #include "Configuration.h"
 #include "Optimizer.h"
 #include "MiddleLayer.h"
+#include "SolutionMessenger.h"
 
 // Implements the Optimizer interface
 class Pyramid : public Optimizer {
@@ -26,7 +27,7 @@ class Pyramid : public Optimizer {
         hill_climber(_config.get<hill_climb::pointer>("hill_climber")),
         local_counter(new Middle_Layer(config, _evaluator, false)),
         cross_counter(new Middle_Layer(config, _evaluator, false)),
-        restarts(0) {
+        restarts(0), msg(length) {
   }
   // Iteratively improves the solution using the pyramid of populations
   // leverages the Population class extensively
@@ -45,6 +46,7 @@ class Pyramid : public Optimizer {
   // Returns true if it was unique and therefore added.
   bool add_unique(const vector<bool> & solution, size_t level);
 
+  void update(size_t level);
   // the pyramid of populations
   vector<Population> pops;
   // keeps track of the set of solutions in the pyramid
@@ -55,6 +57,7 @@ class Pyramid : public Optimizer {
   // Used for recording purposes
   shared_ptr<Evaluator> local_counter, cross_counter;
   size_t restarts;
+  SolutionMessenger msg;
 
 };
 

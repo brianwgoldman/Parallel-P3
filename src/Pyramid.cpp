@@ -12,8 +12,10 @@ using std::endl;
 // Applies crossover between the passed in solution as each level
 // of the pyramid
 void Pyramid::climb(vector<bool> & solution, float & fitness) {
-  // attempts to add this solution to the base level
-  add_unique(solution, 0);
+  // let everyone know about this solution
+  msg.send(solution, 0);
+  // update level 0
+  update(0);
   for (size_t level = 0; level < pops.size(); level++) {
     float prev = fitness;
     // Use population clusters and population solutions to make new solution
@@ -21,8 +23,20 @@ void Pyramid::climb(vector<bool> & solution, float & fitness) {
     // add it to the next level if its a strict fitness improvement,
     // or configured to always add solutions
     if (not only_add_improvements or prev < fitness) {
-      add_unique(solution, level + 1);
+      msg.send(solution, level + 1);
     }
+    update(level + 1);
+  }
+}
+
+void Pyramid::update(size_t level) {
+  bool changed = false;
+  for (const auto & solution : msg.recv(level)) {
+    changed |= add_unique(solution, level);
+  }
+  // Rebuild the tree only if something has changed
+  if (changed) {
+    pops[level].rebuild_tree(rand);
   }
 }
 
@@ -34,9 +48,8 @@ bool Pyramid::add_unique(const vector<bool> & solution, size_t level) {
       // Create new levels as necessary
       pops.push_back(Population(config));
     }
-    // Add the solution and rebuild the tree
+    // Add the solution
     pops[level].add(solution);
-    pops[level].rebuild_tree(rand);
     // track that this solution is now in the pyramid
     seen.insert(solution);
     return true;

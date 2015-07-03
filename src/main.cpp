@@ -57,8 +57,12 @@ using namespace std;
 #include "OptimizationCollection.h"
 #include "Record.h"
 #include "Experiments.h"
+#include <mpi.h>
+
 
 int main(int argc, char * argv[]) {
+  // Initialize MPI calls
+  MPI::Init (argc, argv);
   // Parse the configuration options
   Configuration config;
   config.parse(argc, argv);
@@ -72,7 +76,7 @@ int main(int argc, char * argv[]) {
     seed = rd();
     config.set("seed", seed);
   }
-  rand.seed(seed);
+  rand.seed(seed * (MPI::COMM_WORLD.Get_rank() + 1));
 
   bool disable_metadata = config.get<int>("disable_metadata");
   string metadata;
@@ -130,6 +134,6 @@ int main(int argc, char * argv[]) {
     meta << metadata;
     meta.close();
   }
-
+  MPI_Finalize();
   return 0;
 }
